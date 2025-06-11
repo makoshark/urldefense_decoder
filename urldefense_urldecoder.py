@@ -1,8 +1,8 @@
-#!/usr/bin/env python3
-__author__ = 'Eric Van Cleve; Oleksandr Vlasiuk'
+#!/usr/bin/env python
+__author__ = 'Eric Van Cleve; Alex Vlasiuk'
 __license__ = 'GPL v.3'
-__version__ = '4.0'
-__email__ = 'oleksandr.vlasiuk@gmail.com'
+__version__ = '4.0b'
+__email__ = 'alex@vlasiuk.com'
 __status__ = 'beta'
 
 
@@ -30,7 +30,7 @@ class URLDecoder:
         URLDecoder.v1_pattern = re.compile(r'u=(?P<url>.+?)&k=')
         URLDecoder.v2_pattern = re.compile(r'http.+?urldefense\.proofpoint\.com/v2/url\?u=(?P<url>.+?)&[dc]=.*?&e=')
         URLDecoder.v3_pattern = re.compile(r'http.+?urldefense\.com/v3/__(?P<url>.+?)__;(?P<enc_bytes>.*?)!.*?\$')
-        URLDecoder.v3_token_pattern = re.compile("\*(\*.)?")
+        URLDecoder.v3_token_pattern = re.compile(r'\*(\*.)?')
         URLDecoder.v3_run_mapping = {'A': 2, 'B': 3, 'C': 4, 'D': 5, 'E':
                                             6, 'F': 7, 'G': 8, 'H': 9, 'I': 10,
                                             'J': 11, 'K': 12, 'L': 13, 'M': 14,
@@ -49,7 +49,17 @@ class URLDecoder:
                                             '9': 63, '-': 64, '_': 65}
         URLDecoder.safelinks = re.compile(r'http.+?\.safelinks\.protection\.outlook\.com/\?url=(?P<url>.+?)&(?:amp;)?data=.*?reserved=0')
 
+    def sanitize(self, line):
+        rem1 = r"\[EXTERNAL\] "
+        rem2 = r"You don't often get email from.+?LearnAboutSenderIdentification>"
+        rem3 = r"\[You don't often get email from.+?\]"
+        line = re.sub(rem1, "", line, flags=re.IGNORECASE)
+        line = re.sub(rem2, "", line)
+        line = re.sub(rem3, "", line)
+        return line
+
     def decode(self, line):
+        line = self.sanitize(line)
         match = self.ud_pattern.search(line)
         match_safelinks = self.safelinks.search(line)
         if match:
