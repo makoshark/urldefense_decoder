@@ -11,7 +11,8 @@ I've included two scripts:
 
 Once I have put the two files so they are in my execution `$PATH`, I use the following line in my muttrc file:
 
-```set display_filter="urldefense_urldecoder.py | proofpoint_detagger.py"
+```
+set display_filter="urldefense_urldecoder.py | proofpoint_detagger.py"
 ```
 
 ## Note
